@@ -351,9 +351,9 @@ app.post("/delete/:id", (req, res) => {
     res.redirect("/upload");
 })
 
-// app.listen(port, () => {
-//     console.log(`Server is running on port ${port}`);
-// });
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+});
 
 
-module.exports.handler = serverless(app);
+// module.exports.handler = serverless(app);
