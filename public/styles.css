@@ -1,0 +1,61 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.force-line-break {
+    display: block;
+    content: "";
+    margin-top: 0.5em;
+    /* Adjust this value as needed */
+}
+
+/* form {
+    margin-bottom: 20px;
+} */
+
+
+
+#uploadBody {
+    margin-top: 2%
+}
+
+#formTextArea {
+    position: relative;
+    top: 15px;
+
+}
+
+.hidden {
+    display: none;
+}
+
+/* button {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+} */
+
+button {
+    margin-right: 5%;
+    width: fit-content;
+    height: 35px;
+}

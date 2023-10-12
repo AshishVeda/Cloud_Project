@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File Upload</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">DropBucket</a>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <span class="navbar-text mr-3">
+                        Welcome, <%= locals.user.username %> <!-- Display logged-in username -->
+                    </span>
+                </li>
+                <li class="nav-item">
+                    <a class="btn btn-outline-danger" href="/logout">Logout</a> <!-- Logout Button -->
+                </li>
+            </ul>
+        </div>
+    </nav>
+  <div id="uploadBody" class="container">
+    <h1>File Upload to S3</h1>
+    <form id="upload-form" enctype="multipart/form-data" action="/upload" method="POST">
+      <input type="file" name="file" id="file-input" required>
+      <textarea rows="2" name="FileDesc" placeholder="File Description" id="formTextArea"></textarea>
+      <button type="submit" class="btn btn-outline-success">Upload</button>
+    </form>
+    <div id="upload-result"></div>
+  </div>
+  <div class="container mt-5">
+    <h2>Uploaded Files</h2>
+    <ul class="list-group mt-3">
+        <% for(var i=0; i<files.length; i++){ %>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                
+                <div style="display: flex; flex-direction:column; width: 100%;">
+               <div style="display: flex; justify-content: space-between;">
+               <div>
+                <%= files[i].Key %>
+            </div>
+                <div class="btn-group" style="display:flex; justify-content:space-between;">
+                    
+                    <a style="margin-right: 10px;" class=" btn btn-outline-success btn-sm" href="https://djpy4afjg9es0.cloudfront.net/<%=files[i].Key%>" >Download</a>
+                    <button style="margin-right: 10px;" id="<%=files[i].Key %>" class=" btn btn-outline-primary btn-sm updateButton" data-toggle="modal" data-target="uploadModal">Update</button>
+                    <form action="/delete/<%=files[i].Key%>" method="post">
+                        <button style="margin-right: 10px;" class="btn btn-outline-danger btn-sm">Delete</button>
+                    </form>
+                </div>
+            </div>
+                <div style="color:rgb(158, 158, 158);">
+                    Upload Time: <%= files[i].metadata.uploadtime %>
+                </div>
+            </div>
+                <!-- Add code here for displaying metedata from ejs object -->
+
+                <div class="modal" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="uploadModalLabel">Update File</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeModalButton">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- Form Content -->
+                                <form id="upload-form" enctype="multipart/form-data" action="/update" method="POST">
+                                    <input type="hidden" id="fileKey" name="fileKey" value="">
+                                    <input type="file" name="file" id="file-input" required>
+                                    <textarea rows="2" name="FileDesc" placeholder="File Description" id="formTextArea"></textarea>
+                                    <button type="submit" class="btn btn-outline-success">Upload</button>
+                                </form>
+                                <!-- Form Content End -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        <% }; %>
+    </ul>
+</div>
+  <script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get all elements with class 'my-element'
+        var elements = document.querySelectorAll('.updateButton');
+        var uploadModal = document.getElementById("uploadModal");
+
+        // Attach onclick event to each element
+        elements.forEach(function(element) {
+            element.addEventListener('click', function(event) {
+                // Your click event logic here
+                var clickedButton = event.target; // This is the button that was clicked
+
+                // You can access any property or attribute of the clicked button
+                var buttonId = clickedButton.id; 
+                var fileKeyInput = document.getElementById("fileKey");
+                fileKeyInput.value = buttonId;
+                
+
+                uploadModal.style.display = 'block';
+            });
+        });
+        var closeModalButton = document.getElementById('closeModalButton');
+
+        // When the user clicks on the close button, close the modal
+        closeModalButton.addEventListener('click', function() {
+            uploadModal.style.display = 'none';
+        });
+    });
+
+   
+  </script>
+</body>
+</html>

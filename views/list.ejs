@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uploaded Files</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Uploaded Files</h2>
+        <ul class="list-group mt-3">
+            <% for(var i=0; i<files.length; i++){ %>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <%= files[i].Key %>
+                    <div class="btn-group">
+                        <button class="btn btn-primary btn-sm">Update</button>
+                        <button class="btn btn-danger btn-sm">Delete</button>
+                    </div>
+                </li>
+            <% }; %>
+        </ul>
+    </div>
+</body>
+</html>

@@ -1,0 +1,26 @@
+service: cloud-project-1
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  memorySize: 2048
+  stage: dev
+  timeout: 20
+  region: us-east-1
+
+functions:
+  api:
+    handler: app.handler
+    events:
+      - http:
+          path: /
+          method: ANY
+      - http:
+          path: /{proxy+}
+          method: ANY
+    environment:
+      ENV_AWS_ACCESS_KEY_ID: AKIAUNNHP27GRL2EMSPZ
+      ENV_AWS_SECRET_ACCESS_KEY: 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
+      ENV_AWS_REGION: us-east-2
+      S3_BUCKET_NAME: main-origin-bucket

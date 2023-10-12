@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration and Login</title>
+    <link rel="stylesheet" href="/styles1.css">
+</head>
+<body>
+    <div class="container">
+        <% if(error){%>
+            <span><%=error%></span>
+            <%}%>
+        <h1>User Registration and Login</h1>
+        <div class="form">
+            <h2>Register</h2>
+            <form action="/auth/register" method ="POST" id="registerForm">
+                <input type="text" class="regUsername" placeholder="UserName" name="UserName" required>
+                <input type="text" class="regUsername" placeholder="FirstName" name="FirstName" required>
+                <input type="text" class="regUsername" placeholder="LastName" name="LastName" required>
+                <input type="password" id="regPassword" placeholder="Password" name="password" required>
+                <button type="submit">Register</button>
+            </form>
+            <div id="registrationMessage"></div>
+        </div>
+
+        <div class="form">
+            <h2>Login</h2>
+            <form action="/auth/login" method ="POST" id="loginForm">
+                <input type="text" id="loginUsername" placeholder="Username" name="UserName" required>
+                <input type="password" id="loginPassword" placeholder="Password" name="password" required>
+                <button type="submit">Login</button>
+            </form>
+            <div id="loginMessage"></div>
+        </div>
+    </div>
+
+</body>
+</html>
