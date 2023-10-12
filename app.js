@@ -290,6 +290,7 @@ app.post("/update", authenticateJWT, upload.single('file'), async (req, res) => 
     var metadata = await getObjectMetadata(Key);
     console.log(metadata);
     metadata["updatetime"] = new Date().toISOString();
+    metadata["desc"] = desc;
     console.log(metadata);
 
     const updatedFileContent = require('fs').readFileSync(updatedFile.path);
