@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File Upload</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        body {
+    background: linear-gradient(to right, rgb(4, 127, 204), rgb(201, 244, 255)); /* Gradient from blue to green */
+}
+
+        .container {
+            margin-top: 7%;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+        }
+
+.list-group-item:hover {
+        border: 2px solid black; /* Change the border style and color as needed */
+    }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">DropBucket</a>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <span class="navbar-text mr-3">
+                        Welcome, <%= locals.user.username %> <!-- Display logged-in username -->
+                    </span>
+                </li>
+                <li class="nav-item">
+                    <a class="btn btn-outline-danger" href="/logout">Logout</a> <!-- Logout Button -->
+                </li>
+            </ul>
+        </div>
+    </nav>
+  <div class="container">
+    <h2>Admin Panel</h2>
+    <div style="color: gray;">(Click on the user to view uploaded files)</div>
+    <ul class="list-group mt-3">
+        <% for(var i=0; i<users.length; i++){ %>
+            <a href="/admin/dashboard/<%= users[i].UserName%>" class="btn list-group-item-link" >
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                
+                    <%= users[i].UserName %> 
+                
+                <div style="margin-left: auto;">></div>
+            </li>
+        </a>
+        <%}%>
+    </ul>
+                
+</div>
+  
+<script>
+    function selectUser(username) {
+        // Set the selected username in a hidden input field
+        document.getElementById('selectedUsername').value = username;
+        // Submit the form
+        document.getElementById('userForm').submit();
+    }
+</script>
+</body>
+</html>
