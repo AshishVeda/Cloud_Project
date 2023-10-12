@@ -50,7 +50,7 @@ function authenticateJWT(req, res, next) {
 
         jwt.verify(token, JWT_SECRET, (err, user) => {
             if (err) {
-                return res.redirect("/auth?error=" + encodeURIComponent('Please login again, Token not available')); // Forbidden if token is invalid
+                return res.redirect("/auth?error=" + encodeURIComponent('Please login again, Token not verified')); // Forbidden if token is invalid
             }
             req.user = user;
             res.locals.user = user;
