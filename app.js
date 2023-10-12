@@ -46,7 +46,7 @@ function authenticateJWT(req, res, next) {
     // console.log(req.header("authorization"));
     try {
         const token = req.cookies.token;
-        console.log(token);
+        console.log(token); /// Here cookie token is coming as undefined
         if (!token) return res.redirect("/auth?error=" + encodeURIComponent('Please login again, Token not available')); // Forbidden if no token provided
 
         jwt.verify(token, JWT_SECRET, (err, user) => {
@@ -122,11 +122,7 @@ app.post('/auth/login', (req, res) => {
                     const token = jwt.sign({ username: user.UserName, id: user.UserId }, JWT_SECRET, { expiresIn: '1h' });
                     // res.status(200).json({ token });
                     console.log(token);
-                    res.cookie('token', token, {
-                        httpOnly: true,
-                        secure: true,
-                        sameSite: 'strict'
-                    });
+                    res.cookie('token', token);
 
                     res.redirect("/upload");
                 } else {
