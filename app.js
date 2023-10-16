@@ -7,7 +7,6 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 
-const serverless = require("serverless-http");
 require('dotenv').config();
 
 const app = express();
