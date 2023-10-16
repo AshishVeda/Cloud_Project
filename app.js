@@ -174,7 +174,7 @@ app.get('/admin/dashboard', authenticateJWT, (req, res) => {
             results = results.filter(function (obj) {
                 return obj.UserRole !== 'admin';
             });
-            console.log(results);
+            console.log("objects listing ",results);
             res.render("adminDashboard.ejs", { users: results });
         });
     } else {
@@ -202,7 +202,7 @@ app.get("/admin/dashboard/:id", authenticateJWT, (req, res) => {
 
                 }
             }
-
+            console.log("Listing objects");
             res.render("adminDelete.ejs", { files: temp });
         }
     })
@@ -224,6 +224,7 @@ app.post('/admin/delete/:userId/:id', authenticateJWT, (req, res) => {
             console.log('Object deleted successfully:', data);
         }
     });
+    console.log("deleted object by admin");
     res.redirect("/admin/dashboard/" + userId);
 
 
@@ -257,7 +258,7 @@ app.get("/upload", authenticateJWT, (req, res) => {
                         }
                     }
 
-
+                    console.log("Listing objects");
                     res.render("upload.ejs", { files: temp });
                 }
             });
@@ -296,6 +297,7 @@ app.post('/upload', authenticateJWT, upload.single('file'), (req, res) => {
 
         require('fs').unlinkSync(file.path);
         const fileUrl = data.Location;
+        console.log("uploaded object");
         res.redirect("/upload");
     });
 
@@ -331,6 +333,7 @@ app.post("/update", authenticateJWT, upload.single('file'), async (req, res) => 
             console.error('Error uploading file:', err);
             return res.status(500).send('Error uploading file to S3.');
         }
+        console.log("updated object");
         res.redirect("/upload");
     });
 
@@ -351,7 +354,7 @@ app.get("/list", authenticateJWT, (req, res) => {
                 temp.push(object);
                
             });
-          
+            console.log("Listing all objects");
             res.render("list.ejs", { files: temp });
         }
     });
@@ -374,7 +377,6 @@ app.post("/delete/:id", (req, res) => {
 })
 
 app.listen(port, () => {
-    console.log(process.env.S3_BUCKET_NAME);
     console.log(`Server is running on port ${port}`);
 });
 
