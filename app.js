@@ -41,12 +41,9 @@ var connection = mysql.createConnection({
 
 const JWT_SECRET = 'your_jwt_secret_key';
 
-// Middleware to verify JWT
 function authenticateJWT(req, res, next) {
-    // console.log(req.header("authorization"));
     try {
         const token = req.cookies.token;
-        // console.log(token); /// Here cookie token is coming as undefined
         if (!token) return res.redirect("/auth?error=" + encodeURIComponent('Please login again, Token not available')); // Forbidden if no token provided
 
         jwt.verify(token, JWT_SECRET, (err, user) => {
@@ -54,10 +51,9 @@ function authenticateJWT(req, res, next) {
                 return res.redirect("/auth?error=" + encodeURIComponent('Please login again, Token not verified')); // Forbidden if token is invalid
             }
             req.user = user;
-            // console.log(user);
             res.locals.user = user;
 
-            next(); // Continue with the request processing
+            next(); 
         });
     } catch (err) {
         console.log(err);
@@ -87,14 +83,12 @@ app.post('/auth/register', (req, res) => {
     const LastName = req.body.LastName;
     const password = req.body.password;
     const userType = req.body.userType;
-    // console.log(UserName, FirstName, LastName, password);
-    // Hash the password
+
     bcrypt.hash(password, 10, (err, hash) => {
         if (err) {
             res.send(err);
         }
 
-        // Store user data in the database
         connection.query('INSERT INTO AUTHUSERS (UserName, FirstName, LastName, Password, UserRole) VALUES (?, ?, ?, ?, ?)', [UserName, FirstName, LastName, hash, userType], (error, results, fields) => {
             if (error) throw error;
             res.redirect('/auth');
@@ -107,34 +101,29 @@ app.post('/auth/login', (req, res) => {
     const username = req.body.UserName;
     const password = req.body.password;
     const userType = req.body.userType;
-    // Retrieve user data from the database
-    connection.query('SELECT * FROM AUTHUSERS WHERE UserName = ?', [username], (error, results, fields) => {
+
+    connection.query('SELECT * FROM AUTHUSERS WHERE UserName = ? and UserRole = ?', [username, userType], (error, results, fields) => {
         if (error) throw error;
 
         if (results.length > 0) {
             const user = results[0];
-            // console.log(user.password, password);
-            // Compare hashed password with the provided password
             bcrypt.compare(password, user.Password, (err, result) => {
                 if (err) throw err;
 
                 if (result) {
-                    // Generate JWT token if passwords match  
-
+                    
                     const token = jwt.sign({ username: user.UserName, id: user.UserId }, JWT_SECRET, { expiresIn: '1h' });
-                    // res.status(200).json({ token });
-                    // console.log(token);
+
                     res.cookie('token', token);
                     const userRole = user.UserRole;
-                    // console.log("aaaa");
-                    // console.log(userRole);
+
                     res.cookie('role', userRole);
                     if (userRole === 'admin') {
-                        res.redirect("/admin/dashboard"); // Redirect to admin dashboard
+                        res.redirect("/admin/dashboard"); 
                     } else {
-                        res.redirect("/upload"); // Redirect to regular user upload page
+                        res.redirect("/upload"); 
                     }
-                    // res.redirect("/upload");
+                    
                 } else {
                     res.redirect("/auth?error=" + encodeURIComponent('Invalid Credentials'));
                 }
@@ -168,23 +157,18 @@ const getObjectMetadata = async (objectKey) => {
 
 async function addData(results, metadata, object) {
     for (var i = 0; i < results.length; i++) {
-        // console.log(results[i].UserName, metadata.username);
         if (results[i].UserName == metadata.username) {
-            // results[i]["Key"].push(object.Key);
             if (results[i]["Key"]) {
                 results[i]["Key"].push(object.Key);
             } else {
                 results[i]["Key"] = [object.Key];
             }
-            // console.log(results[i]);
         }
     }
     return results;
 }
 app.get('/admin/dashboard', authenticateJWT, (req, res) => {
-    // console.log(req.cookies.role);
     if (req.cookies.role === 'admin') {
-        // Query the database to fetch all users
         connection.query('SELECT * FROM AUTHUSERS', (error, results, fields) => {
             if (error) throw error;
 
@@ -218,66 +202,12 @@ app.get("/admin/dashboard/:id", authenticateJWT, (req, res) => {
                     }
 
                 }
-                // console.log(metadata);
             }
-            // console.log(temp);
 
             res.render("adminDelete.ejs", { files: temp });
         }
     })
-    // res.send(req.params.id);
 });
-// app.get('/admin/dashboard', authenticateJWT, (req, res) => {
-//     // Check if the logged-in user is an admin
-//     console.log(req.cookies.role);
-//     if (req.cookies.role === 'admin') {
-//         // Query the database to fetch all users
-//         connection.query('SELECT * FROM AUTHUSERS', (error, results, fields) => {
-//             if (error) throw error;
-//             // Render admin dashboard view with user data
-//             // console.log(results);
-
-//             const params = {
-//                 Bucket: process.env.S3_BUCKET_NAME
-//             };
-//             var temp = [];
-//             s3.listObjects(params, async (err, data) => {
-//                 if (err) {
-//                     console.error('Error listing objects in S3 bucket:', err);
-//                 } else {
-
-//                     var count = 0;
-//                     for (const object of data.Contents) {
-//                         // console.log(object);
-
-//                         const metadata = await getObjectMetadata(object.Key);
-//                         if (metadata) {
-//                             // if (metadata.username == currUser.UserName) {
-//                             //     object["metadata"] = metadata;
-//                             //     temp.push(object);
-//                             // }
-//                             temp = (await addData(results, metadata, object));
-
-
-//                         }
-//                         // console.log(metadata);
-//                     }
-
-//                     console.log(temp);
-//                     // res.render("upload.ejs", { files: temp });
-//                     res.render("adminDashboard.ejs", { users: temp });
-//                 }
-//             });
-//             console.log(temp);
-//             // res.render("adminDashboard.ejs", { users: results });
-
-
-//         });
-//     } else {
-//         // If the logged-in user is not an admin, redirect to the regular user's upload page
-//         res.redirect("/auth");
-//     }
-// });
 
 
 app.post('/admin/delete/:userId/:id', authenticateJWT, (req, res) => {
@@ -311,7 +241,6 @@ app.get("/upload", authenticateJWT, (req, res) => {
 
         if (results.length > 0) {
             const currUser = results[0];
-            // console.log(currUser);
             s3.listObjects(params, async (err, data) => {
                 if (err) {
                     console.error('Error listing objects in S3 bucket:', err);
@@ -321,14 +250,12 @@ app.get("/upload", authenticateJWT, (req, res) => {
                     for (const object of data.Contents) {
                         const metadata = await getObjectMetadata(object.Key);
                         if (metadata && metadata.username) {
-                            // console.log(metadata.username, currUser);
                             if (metadata.username == currUser.UserName) {
                                 object["metadata"] = metadata;
                                 temp.push(object);
                             }
 
                         }
-                        // console.log(metadata);
                     }
 
 
@@ -337,51 +264,8 @@ app.get("/upload", authenticateJWT, (req, res) => {
             });
         }
     });
-    // console.log(currUser);
-
-    // res.render("upload.ejs");
 })
 
-// app.post('/upload', authenticateJWT, upload.single('file'), (req, res) => {
-//     const file = req.file;
-//     const desc = req.body.FileDesc;
-
-//     if (!file) {
-//         return res.status(400).send('No file uploaded.');
-//     }
-//     connection.query('SELECT * FROM AUTHUSERS WHERE UserName = ?', [res.locals.user.username], (error, results, fields) => {
-//         if (error) throw error;
-
-//         if (results.length > 0) {
-//             const currUser = results[0];
-//             const fileContent = require('fs').readFileSync(file.path);
-//             const params = {
-//                 Bucket: process.env.S3_BUCKET_NAME,
-//                 Key: file.originalname,
-//                 Body: fileContent,
-//                 Metadata: {
-//                     UserName: currUser.UserName, // Replace this with the actual username of the uploader
-//                     desc: desc,
-//                     uploadTime: new Date().toISOString(),
-//                     updateTime: new Date().toISOString()
-//                 }
-//             };
-//             console.log(params);
-
-//             s3.upload(params, (err, data) => {
-//                 if (err) {
-//                     console.error('Error uploading file:', err);
-//                     return res.status(500).send('Error uploading file to S3.');
-//                 }
-
-//                 require('fs').unlinkSync(file.path);
-//                 const fileUrl = data.Location;
-//                 res.status(200).send(`File uploaded to: ${fileUrl}`);
-//             });
-//         }
-//     });
-
-// });
 
 app.post('/upload', authenticateJWT, upload.single('file'), (req, res) => {
     const file = req.file;
@@ -398,13 +282,12 @@ app.post('/upload', authenticateJWT, upload.single('file'), (req, res) => {
         Key: file.originalname,
         Body: fileContent,
         Metadata: {
-            UserName: currUser, // Replace this with the actual username of the uploader
+            UserName: currUser, 
             desc: desc,
             uploadTime: new Date().toISOString(),
             updateTime: new Date().toISOString()
         }
     };
-    // console.log(params);
 
     s3.upload(params, (err, data) => {
         if (err) {
@@ -426,16 +309,15 @@ app.post("/update", authenticateJWT, upload.single('file'), async (req, res) => 
     const updatedFile = req.file;
     const desc = req.body.FileDesc;
     const Key = req.body.fileKey;
-    // console.log("updated route")
-    // console.log(updatedFile, desc, Key);
+
     if (!updatedFile) {
         return res.status(400).send('No file uploaded.');
     }
     var metadata = await getObjectMetadata(Key);
-    // console.log(metadata);
+    
     metadata["updatetime"] = new Date().toISOString();
     metadata["desc"] = desc;
-    // console.log(metadata);
+    
 
     const updatedFileContent = require('fs').readFileSync(updatedFile.path);
     const putObjectParams = {
@@ -464,13 +346,13 @@ app.get("/list", authenticateJWT, (req, res) => {
         if (err) {
             console.error('Error listing objects in S3 bucket:', err);
         } else {
-            // console.log('Objects in the bucket:');
+            
             var temp = []; var count = 0;
             data.Contents.forEach((object) => {
                 temp.push(object);
-                // console.log(object);
+               
             });
-            // console.log(temp);
+          
             res.render("list.ejs", { files: temp });
         }
     });

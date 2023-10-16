@@ -1,102 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>User Registration and Login</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
     <style>
-        body {
-    background: linear-gradient(to right, rgb(4, 127, 204), rgb(201, 244, 255)); /* Gradient from blue to green */
-}
+      body {
+        background: linear-gradient(to right, rgb(4, 127, 204), rgb(201, 244, 255)); /* Gradient from blue to green */
+        height: 100vh;
+        width: 100vw;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        gap: 30px;
+      }
 
-        .container {
-            margin-top: 100px;
-        }
+      .form-container {
+        height: 100%;
+        width: 500px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 0px 40px;
+      }
 
-        .form-container {
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
-        }
-        .vertical-line {
-    border-left: 5px solid grey; /* You can adjust the color and style of the line */
-    height: 100%; /* Ensures the line stretches to match the height of the columns */
-}
+      .title {
+        font-weight: 400;
+        letter-spacing: 1.5px;
+      }
 
+      .container {
+        height: 600px;
+        width: 500px;
+        background-color: white;
+        box-shadow: 8px 8px 20px rgb(42, 58, 63);
+        position: relative;
+        overflow: hidden;
+        border-radius: 40px;
+      }
+
+      .btn {
+        height: 60px;
+        width: 300px;
+        margin: 20px auto;
+        box-shadow: 10px 10px 30px rgb(254, 215, 188);
+        border-radius: 50px;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+      }
+
+      .login,
+      .signup {
+        border: none;
+        background-color: transparent;
+        position: relative;
+      }
+
+      .slider {
+        height: 60px;
+        width: 150px;
+        border-radius: 60px;
+        background-image: linear-gradient(to right, rgb(184, 223, 255), rgb(12, 172, 252));
+        position: absolute;
+        top: 20px;
+        left: 100px;
+        transition: all 0.5s ease-in-out;
+      }
+
+      .moveslider {
+        left: 250px;
+      }
+
+      .form-section {
+        height: 500px;
+        width: 1200px;
+        display: flex;
+        position: relative;
+        transition: all 0.5s ease-in-out;
+        left: 0px;
+      }
+
+      .form-section-move {
+        left: -500px;
+      }
+
+      .formclass {
+        margin-top: -20%;
+      }
+      #loginMessage {
+        display: flex;
+        position: relative;
+        top: 25px;
+        left: 100px;
+        color: rgb(249, 66, 66);
+        font-weight: 600;
+      }
     </style>
-</head>
+  </head>
 
-<body>
-    <nav style="background-color: rgba(255, 255, 255, 0.9); " class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">DropBucket</a>
+  <body>
+    <h1 style="color: rgb(96, 48, 48)">DropBucket</h1>
 
-    </nav>
     <div class="container">
-        <div class="row">
-            <div class="col-md-6 ">
-                <div id="loginForm" class="form-container">
-                    <h2>Login</h2>
-                    <form action="/auth/login" method="POST">
-                        <div class="form-group">
-                            <input type="text" class="form-control" placeholder="Username" name="UserName" required>
-                        </div>
-                        <div class="form-group">
-                            <input type="password" class="form-control" placeholder="Password" name="password" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Login As:</label>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="userType" id="userRadio" value="user" checked>
-                                <label class="form-check-label" for="userRadio">User</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="userType" id="adminRadio" value="admin">
-                                <label class="form-check-label" for="adminRadio">Admin</label>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Login</button>
-                    </form>
-                    <div id="loginMessage"></div>
-                </div>
+      <div class="slider"></div>
+      <div class="btn">
+        <button class="login">Login</button>
+        <button class="signup">Signup</button>
+      </div>
+      <% if(error){ %>
+      <div id="loginMessage"><%= error %></div>
+      <%}%>
+      <div class="form-section">
+        <div class="form-container">
+          <form class="formclass" action="/auth/login" method="POST">
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="Username" name="UserName" required />
             </div>
-
-            <div class="col-md-6 vertical-line">
-                <div id="registrationForm" class="form-container">
-                    <h2>Register</h2>
-                    <form action="/auth/register" method="POST">
-                        <div class="form-group">
-                            <input type="text" class="form-control" placeholder="UserName" name="UserName" required>
-                        </div>
-                        <div class="form-group">
-                            <input type="text" class="form-control" placeholder="FirstName" name="FirstName" required>
-                        </div>
-                        <div class="form-group">
-                            <input type="text" class="form-control" placeholder="LastName" name="LastName" required>
-                        </div>
-                        <div class="form-group">
-                            <input type="password" class="form-control" placeholder="Password" name="password" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Register As:</label>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="userType" id="userRadio" value="user" checked>
-                                <label class="form-check-label" for="userRadio">User</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="userType" id="adminRadio" value="admin">
-                                <label class="form-check-label" for="adminRadio">Admin</label>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Register</button>
-                    </form>
-                    <div id="registrationMessage"></div>
-                </div>
+            <div class="form-group">
+              <input type="password" class="form-control" placeholder="Password" name="password" required />
             </div>
+            <div class="form-group">
+              <label>Login As:</label>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="userType" id="userRadio" value="user" checked />
+                <label class="form-check-label" for="userRadio">User</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="userType" id="adminRadio" value="admin" />
+                <label class="form-check-label" for="adminRadio">Admin</label>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Login</button>
+          </form>
         </div>
-    </div>
-</body>
 
+        <div id="registrationForm" class="form-container">
+          <form action="/auth/register" method="POST">
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="UserName" name="UserName" required />
+            </div>
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="FirstName" name="FirstName" required />
+            </div>
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="LastName" name="LastName" required />
+            </div>
+            <div class="form-group">
+              <input type="password" class="form-control" placeholder="Password" name="password" required />
+            </div>
+            <div class="form-group">
+              <label>Register As:</label>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="userType" id="userRadio" value="user" checked />
+                <label class="form-check-label" for="userRadio">User</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="userType" id="adminRadio" value="admin" />
+                <label class="form-check-label" for="adminRadio">Admin</label>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Register</button>
+          </form>
+          <div id="registrationMessage"></div>
+        </div>
+      </div>
+    </div>
+    <script>
+      let signup = document.querySelector(".signup");
+      let login = document.querySelector(".login");
+      let slider = document.querySelector(".slider");
+      let formSection = document.querySelector(".form-section");
+
+      signup.addEventListener("click", () => {
+        slider.classList.add("moveslider");
+        formSection.classList.add("form-section-move");
+      });
+
+      login.addEventListener("click", () => {
+        slider.classList.remove("moveslider");
+        formSection.classList.remove("form-section-move");
+      });
+    </script>
+  </body>
 </html>
