@@ -374,6 +374,7 @@ app.post("/delete/:id", (req, res) => {
 })
 
 app.listen(port, () => {
+    console.log(process.env.S3_BUCKET_NAME);
     console.log(`Server is running on port ${port}`);
 });
 
