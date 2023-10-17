@@ -6,6 +6,11 @@ const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
+const axios = require('axios');
+const cors = require('cors');
+
+
+
 
 require('dotenv').config();
 
@@ -17,6 +22,10 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static('uploads'));
+app.use(cors({
+    origin: 'https://44.192.39.79:4000', // Allow requests from this origin
+    credentials: true // Enable credentials (cookies, authorization headers, etc.)
+}));
 
 AWS.config.update({
     accessKeyId: process.env.ENV_AWS_ACCESS_KEY_ID,
@@ -90,13 +99,14 @@ app.post('/auth/register', (req, res) => {
 
         connection.query('INSERT INTO AUTHUSERS (UserName, FirstName, LastName, Password, UserRole) VALUES (?, ?, ?, ?, ?)', [UserName, FirstName, LastName, hash, userType], (error, results, fields) => {
             if (error) throw error;
-            res.redirect('/auth');
+            res.redirect('https://44.192.39.79:4000/auth');
         });
     });
 });
 
 
 app.post('/auth/login', (req, res) => {
+    
     const username = req.body.UserName;
     const password = req.body.password;
     const userType = req.body.userType;
@@ -118,24 +128,32 @@ app.post('/auth/login', (req, res) => {
 
                     res.cookie('role', userRole);
                     if (userRole === 'admin') {
-                        res.redirect("/admin/dashboard"); 
+                        // res.redirect("/admin/dashboard"); 
+                        res.redirect('https://44.192.39.79:4000/admin/dashboard');
+
                     } else {
-                        res.redirect("/upload"); 
+                        // res.redirect("/upload"); 
+                        res.redirect('https://44.192.39.79:4000/upload');
+                        // res.status(200).json({
+                        //     success: true,
+                        //     message: 'Registration successful!',
+                        //     redirectURL: '/success' // Specify the redirect URL for a successful registration
+                        // });
                     }
                     
                 } else {
-                    res.redirect("/auth?error=" + encodeURIComponent('Invalid Credentials'));
+                    res.redirect("https://44.192.39.79:4000/auth?error=" + encodeURIComponent('Invalid Credentials'));
                 }
             });
         } else {
-            res.redirect("/auth?error=" + encodeURIComponent('Invalid Credentials'));
+            res.redirect("https://44.192.39.79:4000/auth?error=" + encodeURIComponent('Invalid Credentials'));
         }
     });
 });
 
 app.get("/logout", authenticateJWT, function (req, res) {
     res.cookie("token", "", { maxAge: 1 });
-    res.redirect("/auth");
+    res.redirect("https://44.192.39.79:4000/auth");
 })
 
 /////////////////////////////////////////////////////////////////
@@ -225,46 +243,46 @@ app.post('/admin/delete/:userId/:id', authenticateJWT, (req, res) => {
         }
     });
     console.log("deleted object by admin");
-    res.redirect("/admin/dashboard/" + userId);
+    res.redirect("https://44.192.39.79:4000/admin/dashboard/" + userId);
 
 
 });
 
-app.get("/upload", authenticateJWT, (req, res) => {
-    const params = {
-        Bucket: process.env.S3_BUCKET_NAME
-    };
+// app.get("/upload", authenticateJWT, (req, res) => {
+//     const params = {
+//         Bucket: process.env.S3_BUCKET_NAME
+//     };
 
 
-    connection.query('SELECT * FROM AUTHUSERS WHERE UserName = ?', [res.locals.user.username], (error, results, fields) => {
-        if (error) throw error;
+//     connection.query('SELECT * FROM AUTHUSERS WHERE UserName = ?', [res.locals.user.username], (error, results, fields) => {
+//         if (error) throw error;
 
-        if (results.length > 0) {
-            const currUser = results[0];
-            s3.listObjects(params, async (err, data) => {
-                if (err) {
-                    console.error('Error listing objects in S3 bucket:', err);
-                } else {
+//         if (results.length > 0) {
+//             const currUser = results[0];
+//             s3.listObjects(params, async (err, data) => {
+//                 if (err) {
+//                     console.error('Error listing objects in S3 bucket:', err);
+//                 } else {
 
-                    var temp = []; var count = 0;
-                    for (const object of data.Contents) {
-                        const metadata = await getObjectMetadata(object.Key);
-                        if (metadata && metadata.username) {
-                            if (metadata.username == currUser.UserName) {
-                                object["metadata"] = metadata;
-                                temp.push(object);
-                            }
+//                     var temp = []; var count = 0;
+//                     for (const object of data.Contents) {
+//                         const metadata = await getObjectMetadata(object.Key);
+//                         if (metadata && metadata.username) {
+//                             if (metadata.username == currUser.UserName) {
+//                                 object["metadata"] = metadata;
+//                                 temp.push(object);
+//                             }
 
-                        }
-                    }
+//                         }
+//                     }
 
-                    console.log("Listing objects");
-                    res.render("upload.ejs", { files: temp });
-                }
-            });
-        }
-    });
-})
+//                     console.log("Listing objects");
+//                     res.render("upload.ejs", { files: temp });
+//                 }
+//             });
+//         }
+//     });
+// })
 
 
 app.post('/upload', authenticateJWT, upload.single('file'), (req, res) => {
@@ -298,7 +316,7 @@ app.post('/upload', authenticateJWT, upload.single('file'), (req, res) => {
         require('fs').unlinkSync(file.path);
         const fileUrl = data.Location;
         console.log("uploaded object");
-        res.redirect("/upload");
+        res.redirect("https://44.192.39.79:4000/upload");
     });
 
 
@@ -334,7 +352,7 @@ app.post("/update", authenticateJWT, upload.single('file'), async (req, res) => 
             return res.status(500).send('Error uploading file to S3.');
         }
         console.log("updated object");
-        res.redirect("/upload");
+        res.redirect("https://44.192.39.79:4000/upload");
     });
 
 });
@@ -373,7 +391,7 @@ app.post("/delete/:id", (req, res) => {
             console.log('Object deleted successfully:', data);
         }
     });
-    res.redirect("/upload");
+    res.redirect("https://44.192.39.79:4000/upload");
 })
 
 app.listen(port, () => {

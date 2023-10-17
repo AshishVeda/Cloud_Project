@@ -60,7 +60,7 @@
                 <div class="btn-group" style="display:flex; justify-content:space-between;">
                     
                     <a style="margin-right: 10px;" class=" btn btn-outline-success btn-sm" href="https://djpy4afjg9es0.cloudfront.net/<%=files[i].Key%>" >Download</a>
-                    <form action="/admin/delete/<%= files[i].metadata.username%>/<%=files[i].Key%>" method="post">
+                    <form action="http://localhost:3000/admin/delete/<%= files[i].metadata.username%>/<%=files[i].Key%>" method="post">
                         <button style="margin-right: 10px;" class="btn btn-outline-danger btn-sm">Delete</button>
                     </form>
                 </div>
