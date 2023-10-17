@@ -125,10 +125,10 @@ app.post('/auth/login', (req, res) => {
                     
                     const token = jwt.sign({ username: user.UserName, id: user.UserId }, JWT_SECRET, { expiresIn: '1h' });
 
-                    res.cookie('token', token, {SameSite:'None'});
+                    res.cookie('token', token, {SameSite:'None', secure: true });
                     const userRole = user.UserRole;
 
-                    res.cookie('role', userRole, {SameSite:'None'});
+                    res.cookie('role', userRole, {SameSite:'None', secure: true });
                     if (userRole === 'admin') {
                         // res.redirect("/admin/dashboard"); 
                         res.redirect('http://44.192.39.79:4000/admin/dashboard');
