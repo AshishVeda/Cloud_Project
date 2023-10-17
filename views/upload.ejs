@@ -21,14 +21,14 @@
                     </span>
                 </li>
                 <li class="nav-item">
-                    <a class="btn btn-outline-danger" href="http://44.195.23.78:3000/logout">Logout</a> <!-- Logout Button -->
+                    <a class="btn btn-outline-danger" href="http://44.192.39.79:3000/logout">Logout</a> <!-- Logout Button -->
                 </li>
             </ul>
         </div>
     </nav>
   <div id="uploadBody" class="container">
     <h1>File Upload to S3</h1>
-    <form id="upload-form" enctype="multipart/form-data" action="http://44.195.23.78:3000/upload" method="POST">
+    <form id="upload-form" enctype="multipart/form-data" action="http://44.192.39.79:3000/upload" method="POST">
       <input type="file" name="file" id="file-input" required>
       <textarea rows="2" name="FileDesc" placeholder="File Description" id="formTextArea"></textarea>
       <button type="submit" class="btn btn-outline-success">Upload</button>
@@ -50,7 +50,7 @@
                     
                     <a style="margin-right: 10px;" class=" btn btn-outline-success btn-sm" href="https://djpy4afjg9es0.cloudfront.net/<%=files[i].Key%>" >Download</a>
                     <button style="margin-right: 10px;" id="<%=files[i].Key %>" class=" btn btn-outline-primary btn-sm updateButton" data-toggle="modal" data-target="uploadModal">Update</button>
-                    <form action="http://44.195.23.78:3000/delete/<%=files[i].Key%>" method="post">
+                    <form action="http://44.192.39.79:3000/delete/<%=files[i].Key%>" method="post">
                         <button style="margin-right: 10px;" class="btn btn-outline-danger btn-sm">Delete</button>
                     </form>
                 </div>
@@ -78,7 +78,7 @@
                             </div>
                             <div class="modal-body">
                                 <!-- Form Content -->
-                                <form id="upload-form" enctype="multipart/form-data" action="http://44.195.23.78:3000/update" method="POST">
+                                <form id="upload-form" enctype="multipart/form-data" action="http://44.192.39.79:3000/update" method="POST">
                                     <input type="hidden" id="fileKey" name="fileKey" value="">
                                     <input type="file" name="file" id="file-input" required>
                                     <textarea rows="2" name="FileDesc" placeholder="File Description" id="formTextArea"></textarea>
