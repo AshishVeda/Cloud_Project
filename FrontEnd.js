@@ -50,6 +50,7 @@ const JWT_SECRET = 'your_jwt_secret_key';
 function authenticateJWT(req, res, next) {
     try {
         const token = req.cookies.token;
+        console.log(token);
         if (!token) return res.redirect("/auth?error=" + encodeURIComponent('Please login again, Token not available')); // Forbidden if no token provided
 
         jwt.verify(token, JWT_SECRET, (err, user) => {
