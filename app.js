@@ -23,7 +23,7 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static('uploads'));
 app.use(cors({
-    origin: 'https://44.192.39.79:4000', // Allow requests from this origin
+    origin: 'http://44.192.39.79:4000', // Allow requests from this origin
     credentials: true // Enable credentials (cookies, authorization headers, etc.)
 }));
 
@@ -99,7 +99,7 @@ app.post('/auth/register', (req, res) => {
 
         connection.query('INSERT INTO AUTHUSERS (UserName, FirstName, LastName, Password, UserRole) VALUES (?, ?, ?, ?, ?)', [UserName, FirstName, LastName, hash, userType], (error, results, fields) => {
             if (error) throw error;
-            res.redirect('https://44.192.39.79:4000/auth');
+            res.redirect('http://44.192.39.79:4000/auth');
         });
     });
 });
@@ -129,11 +129,11 @@ app.post('/auth/login', (req, res) => {
                     res.cookie('role', userRole);
                     if (userRole === 'admin') {
                         // res.redirect("/admin/dashboard"); 
-                        res.redirect('https://44.192.39.79:4000/admin/dashboard');
+                        res.redirect('http://44.192.39.79:4000/admin/dashboard');
 
                     } else {
                         // res.redirect("/upload"); 
-                        res.redirect('https://44.192.39.79:4000/upload');
+                        res.redirect('http://44.192.39.79:4000/upload');
                         // res.status(200).json({
                         //     success: true,
                         //     message: 'Registration successful!',
@@ -142,18 +142,18 @@ app.post('/auth/login', (req, res) => {
                     }
                     
                 } else {
-                    res.redirect("https://44.192.39.79:4000/auth?error=" + encodeURIComponent('Invalid Credentials'));
+                    res.redirect("http://44.192.39.79:4000/auth?error=" + encodeURIComponent('Invalid Credentials'));
                 }
             });
         } else {
-            res.redirect("https://44.192.39.79:4000/auth?error=" + encodeURIComponent('Invalid Credentials'));
+            res.redirect("http://44.192.39.79:4000/auth?error=" + encodeURIComponent('Invalid Credentials'));
         }
     });
 });
 
 app.get("/logout", authenticateJWT, function (req, res) {
     res.cookie("token", "", { maxAge: 1 });
-    res.redirect("https://44.192.39.79:4000/auth");
+    res.redirect("http://44.192.39.79:4000/auth");
 })
 
 /////////////////////////////////////////////////////////////////
@@ -243,7 +243,7 @@ app.post('/admin/delete/:userId/:id', authenticateJWT, (req, res) => {
         }
     });
     console.log("deleted object by admin");
-    res.redirect("https://44.192.39.79:4000/admin/dashboard/" + userId);
+    res.redirect("http://44.192.39.79:4000/admin/dashboard/" + userId);
 
 
 });
@@ -316,7 +316,7 @@ app.post('/upload', authenticateJWT, upload.single('file'), (req, res) => {
         require('fs').unlinkSync(file.path);
         const fileUrl = data.Location;
         console.log("uploaded object");
-        res.redirect("https://44.192.39.79:4000/upload");
+        res.redirect("http://44.192.39.79:4000/upload");
     });
 
 
@@ -352,7 +352,7 @@ app.post("/update", authenticateJWT, upload.single('file'), async (req, res) => 
             return res.status(500).send('Error uploading file to S3.');
         }
         console.log("updated object");
-        res.redirect("https://44.192.39.79:4000/upload");
+        res.redirect("http://44.192.39.79:4000/upload");
     });
 
 });
@@ -391,7 +391,7 @@ app.post("/delete/:id", (req, res) => {
             console.log('Object deleted successfully:', data);
         }
     });
-    res.redirect("https://44.192.39.79:4000/upload");
+    res.redirect("http://44.192.39.79:4000/upload");
 })
 
 app.listen(port, () => {
