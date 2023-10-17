@@ -20,7 +20,10 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static('uploads'));
-app.use(cors());
+app.use(cors({
+    origin: 'http://44.195.23.78:3000', // Allow requests from this origin
+    credentials: true // Enable credentials (cookies, authorization headers, etc.)
+}));
 
 AWS.config.update({
     accessKeyId: process.env.ENV_AWS_ACCESS_KEY_ID,
